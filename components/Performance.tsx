@@ -5,14 +5,18 @@ import { PerformanceLog } from '../types';
 
 const Performance: React.FC = () => {
   const [logs, setLogs] = useState<PerformanceLog[]>([]);
+  const [primaryMetric, setPrimaryMetric] = useState<string>('Performance');
 
   useEffect(() => {
-    MockBackend.getPerformanceLogs().then(setLogs);
+    MockBackend.getPerformanceLogs().then(data => {
+        setLogs(data);
+        if (data.length > 0) {
+            // Automatically detect the primary metric from the generated data
+            setPrimaryMetric(data[0].metric);
+        }
+    });
   }, []);
 
-  // Filter for Sprint Data
-  const sprintData = logs.filter(l => l.metric.includes('Sprint'));
-  
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Performance Analytics</h2>
@@ -20,13 +24,13 @@ const Performance: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Main Metric Chart */}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-          <h3 className="text-lg font-semibold mb-6 text-slate-700 dark:text-slate-200">100m Sprint Times (Seconds)</h3>
+          <h3 className="text-lg font-semibold mb-6 text-slate-700 dark:text-slate-200">{primaryMetric} Trend</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sprintData}>
+              <LineChart data={logs}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickFormatter={(val) => val.split('-').slice(1).join('/')}/>
-                <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} stroke="#94a3b8" fontSize={12} />
+                <YAxis domain={['auto', 'auto']} stroke="#94a3b8" fontSize={12} />
                 <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />

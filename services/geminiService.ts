@@ -1,11 +1,32 @@
 import { GoogleGenAI } from "@google/genai";
-import { DietLog, FinancialRecord, PerformanceLog, InjuryRecord } from "../types";
+import { DietLog, FinancialRecord, PerformanceLog, InjuryRecord, TrainingSession } from "../types";
 
 // Initialize Gemini
 // NOTE: We assume process.env.API_KEY is available.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const GeminiService = {
+  /**
+   * General Chat Assistant
+   */
+  chat: async (history: {role: 'user' | 'model', parts: { text: string }[]}[], message: string) => {
+    try {
+        const chat = ai.chats.create({
+            model: 'gemini-2.5-flash',
+            config: {
+                systemInstruction: "You are an elite sports performance assistant for the Athlete360 platform. You help athletes with training advice, diet tips, injury prevention, and motivation. Keep answers concise, encouraging, and scientifically accurate."
+            },
+            history: history
+        });
+
+        const response = await chat.sendMessage({ message });
+        return response.text;
+    } catch (e) {
+        console.error(e);
+        return "I'm having trouble connecting to the locker room server. Try again later.";
+    }
+  },
+
   /**
    * Generates a holistic report for the dashboard
    */
@@ -144,5 +165,52 @@ export const GeminiService = {
       console.error(e);
       return "Track your expenses closely to save for upcoming tournaments.";
     }
+  },
+
+  /**
+   * Training Plan Generation (AI Coach)
+   */
+  generateTrainingPlan: async (sport: string, days: number = 3): Promise<TrainingSession[]> => {
+    try {
+      const prompt = `
+        Create a ${days}-day training plan for a ${sport} athlete.
+        Return a JSON array where each object has:
+        - day: string (e.g., "Monday")
+        - focus: string (e.g., "Speed & Agility")
+        - estimatedDuration: number (minutes)
+        - drills: array of objects { name, category (Tactical/Physical/Technical), durationMin, instructions, imageUrl (use 'https://placehold.co/400x200?text=Drill') }
+      `;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' }
+      });
+      return JSON.parse(response.text || '[]');
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  },
+
+  /**
+   * Medical Report Analysis
+   */
+  analyzeMedicalReport: async (text: string) => {
+      try {
+        const prompt = `
+            Analyze this medical diagnosis text: "${text}".
+            Provide a simplified explanation for the athlete, and 3 distinct rehab exercises that are generally safe for this condition.
+            Return JSON: { "explanation": "string", "exercises": ["string", "string", "string"] }
+        `;
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: { responseMimeType: 'application/json' }
+        });
+        return JSON.parse(response.text || '{}');
+      } catch (e) {
+          return { explanation: "Consult your doctor.", exercises: [] };
+      }
   }
 };
