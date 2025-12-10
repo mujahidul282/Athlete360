@@ -16,7 +16,9 @@ import {
   Dumbbell,
   Briefcase,
   Watch,
-  Sparkles
+  Sparkles,
+  HelpCircle,
+  Shield
 } from 'lucide-react';
 import AIChatbot from './AIChatbot';
 
@@ -144,12 +146,21 @@ const Layout: React.FC<LayoutProps> = ({ children, darkMode, toggleTheme, onLogo
                     <LogOut size={18} /> Sign Out
                </button>
            )}
+           
+           {/* Footer Branding */}
+           <div className="pt-2 flex flex-col items-center text-[10px] text-slate-400 gap-2">
+               <div className="flex gap-4">
+                  <span className="hover:text-emerald-500 cursor-pointer flex items-center gap-1"><Shield size={10}/> Privacy</span>
+                  <span className="hover:text-emerald-500 cursor-pointer flex items-center gap-1"><HelpCircle size={10}/> Help</span>
+               </div>
+               <p>© 2024 Athlete360 Inc. v1.0.0 (Beta)</p>
+           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto h-[calc(100vh-64px)] md:h-screen relative bg-slate-50 dark:bg-[#0b1121]">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto h-[calc(100vh-64px)] md:h-screen relative bg-slate-50 dark:bg-[#0b1121] custom-scrollbar">
+        <div className="max-w-7xl mx-auto pb-10">
           {children}
         </div>
         {/* Floating Chatbot only shown if NOT on the dedicated AI page */}
