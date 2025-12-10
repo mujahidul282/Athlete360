@@ -1,5 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
-import { DietLog, FinancialRecord, PerformanceLog, InjuryRecord, TrainingSession } from "../types";
+import { DietLog, FinancialRecord, PerformanceLog, TrainingSession } from "../types";
+
+// Polyfill type definition for process.env.API_KEY to satisfy TypeScript in Vite environment
+declare const process: {
+  env: {
+    API_KEY: string;
+  }
+};
 
 // Initialize Gemini
 // NOTE: We assume process.env.API_KEY is available.

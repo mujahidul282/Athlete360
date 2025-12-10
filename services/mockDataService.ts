@@ -1,4 +1,4 @@
-import { AthleteProfile, PerformanceLog, InjuryRecord, DietLog, FinancialRecord, CareerGoal, UserRole, JobOpportunity, Tournament, TrainingSession, DeviceMetrics, MedicalReport, CoachingGig } from '../types';
+import { AthleteProfile, PerformanceLog, InjuryRecord, DietLog, FinancialRecord, CareerGoal, UserRole, JobOpportunity, Tournament, MedicalReport, CoachingGig } from '../types';
 
 // Fallback Seed Data (Only used if no profile exists at all)
 const SEED_ATHLETE: AthleteProfile = {

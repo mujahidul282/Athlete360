@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GeminiService } from '../services/geminiService';
 import { MockBackend } from '../services/mockDataService';
 import { TrainingSession, AthleteProfile } from '../types';
-import { Dumbbell, Clock, PlayCircle, RefreshCw, Zap, CheckCircle } from 'lucide-react';
+import { Dumbbell, Clock, PlayCircle, RefreshCw, Zap } from 'lucide-react';
 
 const TrainingCenter: React.FC = () => {
     const [plan, setPlan] = useState<TrainingSession[]>([]);
